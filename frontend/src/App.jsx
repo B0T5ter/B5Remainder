@@ -19,6 +19,8 @@ function App() {
   const [recurrenceValue, setRecurrenceValue] = useState('1')
   const [selectedDays, setSelectedDays] = useState([])
 
+  const API_BASE_URL = `http://${import.meta.env.VITE_API_HOST || 'localhost'}:8000`
+
   const daysOfWeek = [
     { id: 0, name: 'Pon' }, { id: 1, name: 'Wt' }, { id: 2, name: 'Śr' },
     { id: 3, name: 'Czw' }, { id: 4, name: 'Pt' }, { id: 5, name: 'Sob' }, { id: 6, name: 'Ndz' }
@@ -26,7 +28,7 @@ function App() {
 
   const fetchTasks = async (userId) => {
     try {
-      const res = await fetch(`http://localhost:8000/users/${userId}/tasks/today`)
+      const res = await fetch(`${API_BASE_URL}/users/${userId}/tasks/today`)
       if (res.ok) {
         const data = await res.json()
         setTasks(data)
@@ -47,7 +49,7 @@ function App() {
         return
       }
       try {
-        const res = await fetch('http://localhost:8000/users/', {
+        const res = await fetch(`${API_BASE_URL}/users/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, email, password })
@@ -66,7 +68,7 @@ function App() {
       finally { setLoading(false) }
     } else if (isLoginMode && step === 1) {
       try {
-        const res = await fetch('http://localhost:8000/request-login/', {
+        const res = await fetch(`${API_BASE_URL}/request-login/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
@@ -82,7 +84,7 @@ function App() {
       finally { setLoading(false) }
     } else if (isLoginMode && step === 2) {
       try {
-        const res = await fetch('http://localhost:8000/login/', {
+        const res = await fetch(`${API_BASE_URL}/login/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password, otp_code: otpCode })
@@ -110,7 +112,7 @@ function App() {
     let val = recurrenceValue
     if (recurrenceType === 'dni_tygodnia') val = selectedDays.sort().join(',')
     
-    await fetch(`http://localhost:8000/users/${user.id}/tasks/`, {
+    await fetch(`${API_BASE_URL}/users/${user.id}/tasks/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -191,7 +193,7 @@ function App() {
               <p className="font-bold text-lg">{t.name}</p>
               <p className="text-sm text-gray-400 mt-1">{t.recurrence_type} ({t.recurrence_value})</p>
             </div>
-            <button onClick={() => fetch(`http://localhost:8000/tasks/${t.id}/done`, {method: 'PUT'}).then(() => fetchTasks(user.id))} className="bg-green-600 hover:bg-green-500 w-12 h-12 rounded-full flex items-center justify-center transition text-xl">✓</button>
+            <button onClick={() => fetch(`${API_BASE_URL}/tasks/${t.id}/done`, {method: 'PUT'}).then(() => fetchTasks(user.id))} className="bg-green-600 hover:bg-green-500 w-12 h-12 rounded-full flex items-center justify-center transition text-xl">✓</button>
           </div>
         ))}
         {tasks.length === 0 && <p className="text-gray-500 text-center mt-8">Brak zadań na dziś. Odpoczywaj szefie!</p>}
