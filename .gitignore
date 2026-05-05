@@ -1,3 +1,8 @@
+.env
+__pycache__/
+*.pyc
+postgres_data/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
